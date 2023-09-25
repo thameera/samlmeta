@@ -4,11 +4,11 @@ import (
 	"bytes"
 	"encoding/base64"
 	"encoding/pem"
-	"flag"
 	"fmt"
 	"os"
 
 	"github.com/antchfx/xmlquery"
+	"github.com/spf13/pflag"
 )
 
 func certToPEM(cert string) string {
@@ -38,10 +38,10 @@ func writeCertToFile(filename, cert string) {
 
 func main() {
 	var outFileName string
-	flag.StringVar(&outFileName, "w", "", "Output file name")
-	flag.Parse()
+	pflag.StringVarP(&outFileName, "write", "w", "", "Output file name")
+	pflag.Parse()
 
-	args := flag.Args()
+	args := pflag.Args()
 	if len(args) != 1 {
 		fmt.Println("Usage: samlmeta <filename>")
 		os.Exit(1)

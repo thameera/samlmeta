@@ -2,7 +2,10 @@ module github.com/thameera/samlmeta
 
 go 1.21.0
 
-require github.com/antchfx/xmlquery v1.3.18
+require (
+	github.com/antchfx/xmlquery v1.3.18
+	github.com/spf13/pflag v1.0.5
+)
 
 require (
 	github.com/antchfx/xpath v1.2.4 // indirect
