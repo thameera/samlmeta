@@ -5,6 +5,7 @@ import (
 	"encoding/base64"
 	"encoding/pem"
 	"fmt"
+	"net/url"
 	"os"
 
 	"github.com/antchfx/xmlquery"
@@ -27,6 +28,30 @@ func certToPEM(cert string) string {
 	return pemData.String()
 }
 
+func isURL(str string) bool {
+	u, err := url.Parse(str)
+	return err == nil && u.Scheme != "" && u.Host != ""
+}
+
+func isFile(str string) bool {
+	_, err := os.Stat(str)
+	return err == nil
+}
+
+func getXMLFromFile(filename string) (*xmlquery.Node, error) {
+	f, err := os.Open(filename)
+	if err != nil {
+		return nil, err
+	}
+
+	doc, err := xmlquery.Parse(f)
+	if err != nil {
+		return nil, err
+	}
+
+	return doc, nil
+}
+
 func writeCertToFile(filename, cert string) {
 	if err := os.WriteFile(filename, []byte(cert), 0644) ; err != nil {
 		fmt.Println("Error writing file")
@@ -47,17 +72,22 @@ func main() {
 		os.Exit(1)
 	}
 
-	filename := args[0]
-	f, err := os.Open(filename)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
+	arg := args[0]
+	var doc *xmlquery.Node
+	var err error
 
-	doc, err := xmlquery.Parse(f)
-	if err != nil {
-		fmt.Println(err)
-		return
+	if isURL(arg) {
+		fmt.Println("Not implemented")
+		os.Exit(1)
+	} else if isFile(arg) {
+		doc, err = getXMLFromFile(arg)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+	} else {
+		fmt.Println("Invalid filename/URL")
+		os.Exit(1)
 	}
 
 	// Get the sign-in certificate
