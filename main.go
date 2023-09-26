@@ -103,7 +103,7 @@ func main() {
 	fmt.Printf("Sign-in Certificate (PEM):\n%s\n", cert)
 
 	// Get the Sign-in URL
-	signin := xmlquery.FindOne(doc, "//SingleSignOnService[@Binding='urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST']")
+	signin := xmlquery.FindOne(doc, "//*[local-name(.)='EntityDescriptor']/*[local-name(.)='IDPSSODescriptor']/*[local-name(.)='SingleSignOnService']")
 	if signin != nil {
 		fmt.Printf("Sign-in URL:\n%s\n", signin.SelectAttr("Location"))
 	}
