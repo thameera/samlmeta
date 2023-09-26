@@ -52,6 +52,10 @@ func getXMLFromFile(filename string) (*xmlquery.Node, error) {
 	return doc, nil
 }
 
+func getXMLFromURL(url string) (*xmlquery.Node, error) {
+	return xmlquery.LoadURL(url)
+}
+
 func writeCertToFile(filename, cert string) {
 	if err := os.WriteFile(filename, []byte(cert), 0644) ; err != nil {
 		fmt.Println("Error writing file")
@@ -77,8 +81,11 @@ func main() {
 	var err error
 
 	if isURL(arg) {
-		fmt.Println("Not implemented")
-		os.Exit(1)
+		doc, err = getXMLFromURL(arg)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
 	} else if isFile(arg) {
 		doc, err = getXMLFromFile(arg)
 		if err != nil {
