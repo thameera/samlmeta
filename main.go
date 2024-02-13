@@ -62,7 +62,7 @@ func writeCertToFile(filename, cert string) {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-	fmt.Printf("Wrote certificate to %s\n", filename)
+	fmt.Printf("\nWrote certificate to %s\n", filename)
 }
 
 func main() {
@@ -104,18 +104,21 @@ func main() {
 		fmt.Printf("Sign-in Certificate (PEM):\n%s\n", cert)
 	}
 
-	if len(certs) > 1 {
-		fmt.Println("WARNING: More than one signing certificates found!\n")
-	}
-
 	// Get the Sign-in URL
 	signin := xmlquery.FindOne(doc, "//*[local-name(.)='EntityDescriptor']/*[local-name(.)='IDPSSODescriptor']/*[local-name(.)='SingleSignOnService']")
 	if signin != nil {
 		fmt.Printf("Sign-in URL:\n%s\n", signin.SelectAttr("Location"))
 	}
 
-	cert := certToPEM(certs[0].Data)
+	if len(certs) > 1 {
+		fmt.Println("\nWARNING: More than one signing certificates found!")
+	}
+
 	if outFileName != "" {
-		writeCertToFile(outFileName, cert)
+		if len(certs) == 1 {
+			writeCertToFile(outFileName, certs[0].Data)
+		} else if len(certs) > 1 {
+			fmt.Println("WARNING: No output written to file because more than one signing certificates found!")
+		}
 	}
 }
