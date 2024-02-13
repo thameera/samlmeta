@@ -98,9 +98,15 @@ func main() {
 	}
 
 	// Get the sign-in certificate
-	certData := xmlquery.FindOne(doc, "//*[local-name(.)='EntityDescriptor']/*[local-name(.)='IDPSSODescriptor']/*[local-name(.)='KeyDescriptor' and @use='signing']/*[local-name(.)='KeyInfo' and namespace-uri(.)='http://www.w3.org/2000/09/xmldsig#']/*[local-name(.)='X509Data']/*[local-name(.)='X509Certificate']/text()")
-	cert := certToPEM(certData.Data)
-	fmt.Printf("Sign-in Certificate (PEM):\n%s\n", cert)
+	certs := xmlquery.Find(doc, "//*[local-name(.)='EntityDescriptor']/*[local-name(.)='IDPSSODescriptor']/*[local-name(.)='KeyDescriptor' and @use='signing']/*[local-name(.)='KeyInfo' and namespace-uri(.)='http://www.w3.org/2000/09/xmldsig#']/*[local-name(.)='X509Data']/*[local-name(.)='X509Certificate']/text()")
+	for _, certData := range certs {
+		cert := certToPEM(certData.Data)
+		fmt.Printf("Sign-in Certificate (PEM):\n%s\n", cert)
+	}
+
+	if len(certs) > 1 {
+		fmt.Println("WARNING: More than one signing certificates found!\n")
+	}
 
 	// Get the Sign-in URL
 	signin := xmlquery.FindOne(doc, "//*[local-name(.)='EntityDescriptor']/*[local-name(.)='IDPSSODescriptor']/*[local-name(.)='SingleSignOnService']")
@@ -108,6 +114,7 @@ func main() {
 		fmt.Printf("Sign-in URL:\n%s\n", signin.SelectAttr("Location"))
 	}
 
+	cert := certToPEM(certs[0].Data)
 	if outFileName != "" {
 		writeCertToFile(outFileName, cert)
 	}
