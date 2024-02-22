@@ -116,7 +116,7 @@ func main() {
 
 	if outFileName != "" {
 		if len(certs) == 1 {
-			writeCertToFile(outFileName, certs[0].Data)
+			writeCertToFile(outFileName, certToPEM(certs[0].Data))
 		} else if len(certs) > 1 {
 			fmt.Println("WARNING: No output written to file because more than one signing certificates found!")
 		}
