@@ -72,7 +72,7 @@ func main() {
 
 	args := pflag.Args()
 	if len(args) != 1 {
-		fmt.Println("Usage: samlmeta <filename>")
+		fmt.Printf("USAGE:\n%s <filename or URL>\n", os.Args[0])
 		os.Exit(1)
 	}
 
